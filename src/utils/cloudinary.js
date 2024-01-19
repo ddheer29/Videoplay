@@ -1,26 +1,31 @@
-import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
+import fs from "fs"
+import { v2 as cloudinary } from 'cloudinary';
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    cloud_name: 'instacloneclouddheer',
+    api_key: '487523472717783',
+    api_secret: 'uGm79HwfIxG9rfNPV3eU8DmHBTg'
 });
+
 
 const uploadOnCloudinary = async (localFilePath) => {
     try {
-        if(!localFilePath)return null;
+        if (!localFilePath) return null
+        //upload the file on cloudinary
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto"
         })
-        console.log("File is uploaded on cloudinary", response.url);
+        // file has been uploaded successfull
+        //console.log("file is uploaded on cloudinary ", response.url);
+        fs.unlinkSync(localFilePath)
         return response;
     } catch (error) {
-        fs.unlinkSync(localFilePath); // remove the temporary file as upload failed
+        console.log("Error in upload on cloudinary: ", error)
+        fs.unlinkSync(localFilePath) // remove the locally saved temporary file as the upload operation got failed
         return null;
     }
 }
 
-cloudinary.uploader.upload("https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg",
-    { public_id: "olympic_flag" },
-    function (error, result) { console.log(result); });
+
+
+export { uploadOnCloudinary }
